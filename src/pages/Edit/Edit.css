@@ -1,0 +1,151 @@
+/* ================= Base Layout ================= */
+.add {
+    width: 80%;
+    margin-left: max(5vw, 25px);
+    margin-top: 50px;
+    color: #6d6d6d;
+    font-size: 16px;
+}
+
+.add form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* ================= Image Upload ================= */
+.add-image-upload {
+    width: 120px;
+}
+
+.add-image-upload img {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* ================= Inputs ================= */
+.add-product-name,
+.add-product-description {
+    width: max(60%, 300px);
+}
+
+.add-product-name input,
+.add-product-description textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* ================= Category & Price ================= */
+.add-category-price {
+    display: flex;
+    gap: 35px;
+}
+
+
+
+.add-category,
+.add-price {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-category-price select {
+    max-width:max(40%,200px);
+    width: 100%;
+    padding: 18px;
+    border-radius: 5px;
+}
+
+.add-category-price input {
+    width: 93%;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* ================= Button ================= */
+.add-button {
+    padding: 10px;
+    border: none;
+    background-color: black;
+    cursor: pointer;
+    color: #fff;
+    max-width: 160px;
+    border-radius: 5px;
+}
+
+/* ================= Tablet ================= */
+@media (max-width: 1024px) {
+    .add {
+        width: 85%;
+        margin-left: 10%;
+        margin-right: auto;
+    }
+    
+
+    .add-product-name,
+    .add-product-description {
+        width: min(90%, 420px);
+    }
+
+    .add-category-price {
+        gap: 20px;
+    }
+}
+
+
+@media (min-width:1024px){
+    .add-product-name,
+    .add-product-description {
+        width: min(70%, 380px);
+    }
+}
+
+/* ================= Mobile ================= */
+@media (max-width: 640px) {
+    .add {
+        width: 100%;
+        padding: 16px;
+        margin-left: 0;
+    }
+
+    .add-image-upload {
+        width: 100%;
+        text-align: center;
+    }
+
+    .add-image-upload img {
+        max-width: 260px;
+        margin: auto;
+    }
+
+    .add-product-name,
+    .add-product-description,
+    .add-category{
+        width: 100%;
+    }
+
+    .add-price{
+        width: 60%;
+    }
+
+    .add-category-price {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .add input,
+    .add textarea,
+    .add select {
+        padding: 14px;
+        font-size: 14px;
+    }
+
+
+    .add-button {
+        width:55%;
+        max-width: none;
+        padding: 12px;
+        font-size: 16px;
+    }
+}
