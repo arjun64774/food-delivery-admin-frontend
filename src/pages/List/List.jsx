@@ -1,73 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import './List.css';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import { StoreContext } from "../../context/StoreContext";
+import "./List.css";
 
-const List = ({ url }) => {
-  const [list, setList] = useState([]);
-
-  const fetchList = async () => {
-    try {
-      const response = await axios.get(`${url}/api/food/list`);
-      if (response.data.success) {
-        setList(response.data.data);
-      } else {
-        toast.error("Error fetching food list");
-      }
-    } catch (err) {
-      console.log(err);
-      toast.error("Server error");
-    }
-  };
+const List = () => {
+  const { url } = useContext(StoreContext);
+  const [foodList, setFoodList] = useState([]);
 
   useEffect(() => {
-    fetchList();
-  }, []);
-
-  const removeFood = async (foodId) => {
-    try {
-      const response = await axios.post(`${url}/api/food/remove`, { id: foodId });
-      if (response.data.success) {
-        toast.success(response.data.message);
-        fetchList();
-      } else {
-        toast.error("Error deleting food");
+    const fetchFood = async () => {
+      try {
+        const res = await axios.get(`${url}/api/food/list`);
+        if (res.data.success) {
+          setFoodList(res.data.data);
+        }
+      } catch (err) {
+        console.error("Error fetching food list:", err);
       }
-    } catch (err) {
-      console.log(err)
-      toast.error("Server error");
-    }
-  };
+    };
+
+    fetchFood();
+  }, [url]);
 
   return (
-    <div className='list add flex-col'>
-      <p>All Foods List</p>
-      <div className="list-table">
-        <div className="list-table-format title">
-          <b>Image</b>
-          <b>Name</b>
-          <b>Category</b>
-          <b>Price</b>
-          <b>Action</b>
-        </div>
-        {list.map((item, index) => (
-          <div key={index} className='list-table-format'>
-            <img src={item.image} alt="" />
-            <p>{item.name}</p>
-            <p>{item.category}</p>
-            <p>{item.price}</p>
-            <div className="action-buttons">
-              {/* EDIT button */}
-              <Link to={`/edit/${item._id}`}>
-                <span className="edit">✏️</span>
-              </Link>
-              {/* DELETE button */}
-              <span onClick={() => removeFood(item._id)} className="delete">🗑️</span>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="list-container">
+      <h2>Food List</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {foodList.map((item) => (
+            <tr key={item._id}>
+              <td>
+                {item.image ? (
+                  <a href={item.image} target="_blank" rel="noopener noreferrer">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      style={{ width: "80px", height: "80px", objectFit: "cover" }}
+                    />
+                  </a>
+                ) : (
+                  "No Image"
+                )}
+              </td>
+              <td>{item.name}</td>
+              <td>{item.category}</td>
+              <td>${item.price}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
