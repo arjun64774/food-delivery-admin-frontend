@@ -1,139 +1,123 @@
 import React, { useState } from 'react'
 import './Add.css'
-import { assets } from '../../assets/assets'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
 
 const Add = ({ url }) => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  // store form data, now image is a key from assets
   const [data, setData] = useState({
     name: "",
     description: "",
     price: "",
     category: "",
-    image: "food_1" // default image
-  });
+    file: null
+  })
 
-  // handle input changes
-  const onChangeHandler = (event) => {
-    const { name, value } = event.target;
-    setData(prev => ({ ...prev, [name]: value }));
-  };
+  const onChangeHandler = (e) => {
+    const { name, value } = e.target
+    setData(prev => ({ ...prev, [name]: value }))
+  }
 
-  // handle submit
-  const onSubmitHandler = async (event) => {
-    event.preventDefault();
+  const onFileChange = (e) => {
+    setData(prev => ({ ...prev, file: e.target.files[0] }))
+  }
+
+  const onSubmitHandler = async (e) => {
+    e.preventDefault()
+
+    const formData = new FormData()
+    formData.append("name", data.name)
+    formData.append("description", data.description)
+    formData.append("price", data.price)
+    formData.append("category", data.category)
+    formData.append("image", data.file)
 
     try {
-      const response = await axios.post(`${url}/api/food/add`, data); // send JSON directly
+      const res = await axios.post(`${url}/api/food/add`, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
 
-      if (response.data.success) {
-        setData({
-          name: "",
-          description: "",
-          price: "",
-          category: "",
-          image: "food_1"
-        });
-        toast.success(response.data.message);
-
-        setTimeout(() => {
-          navigate("/list");
-        }, 400);
+      if (res.data.success) {
+        toast.success("Food added successfully")
+        navigate("/list")
       } else {
-        toast.error(response.data.message);
+        toast.error(res.data.message)
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Something went wrong!");
+      console.error(err)
+      toast.error("Something went wrong")
     }
-  };
+  }
 
   return (
     <div className='add'>
       <form className="flex-col" onSubmit={onSubmitHandler}>
 
-        {/* Image selector */}
+        {/* IMAGE UPLOAD */}
         <div className="add-image-upload flex-col">
-          <p>Select Image</p>
-          <select name="image" value={data.image} onChange={onChangeHandler}>
-            {Object.keys(assets)
-              .filter(key => key.startsWith("food_"))
-              .map(key => (
-                <option key={key} value={key}>{key}</option>
-              ))}
-          </select>
+          <p>Upload Image</p>
+          <input type="file" accept="image/*" onChange={onFileChange} />
 
-          {/* preview */}
-          <img
-            src={assets[data.image]}
-            alt="preview"
-            style={{ marginTop: '10px', width: '150px' }}
-          />
+          {data.file && (
+            <img
+              src={URL.createObjectURL(data.file)}
+              alt="preview"
+              style={{ width: "150px", marginTop: "10px" }}
+            />
+          )}
         </div>
 
-        {/* Product name */}
+        {/* NAME */}
         <div className="add-product-name flex-col">
           <p>Product Name</p>
           <input
-            onChange={onChangeHandler}
+            name="name"
             value={data.name}
-            type="text"
-            name='name'
-            placeholder='Type here'
+            onChange={onChangeHandler}
             required
           />
         </div>
 
-        {/* Product description */}
+        {/* DESCRIPTION */}
         <div className="add-product-description flex-col">
           <p>Product Description</p>
           <textarea
-            onChange={onChangeHandler}
-            value={data.description}
             name="description"
+            value={data.description}
+            onChange={onChangeHandler}
             rows={6}
-            placeholder='Write content here'
             required
           />
         </div>
 
-        {/* Category & Price */}
+        {/* CATEGORY & PRICE */}
         <div className="add-category-price">
 
-          <div className="add-category flex-col">
-            <p>Product Category</p>
-            <select onChange={onChangeHandler} name="category" value={data.category} required>
-              <option value="">Select Category</option>
-              <option value="Salad">Salad</option>
-              <option value="Rolls">Rolls</option>
-              <option value="Deserts">Desert</option>
-              <option value="Sandwich">Sandwich</option>
-              <option value="Cake">Cake</option>
-              <option value="Pasta">Pasta</option>
-              <option value="Noodles">Noodles</option>
-              <option value="Pure Veg">Pure Veg</option>
-            </select>
-          </div>
+          <select name="category" value={data.category} onChange={onChangeHandler} required>
+            <option value="">Select Category</option>
+            <option value="Salad">Salad</option>
+            <option value="Rolls">Rolls</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Sandwich">Sandwich</option>
+            <option value="Cake">Cake</option>
+            <option value="Pasta">Pasta</option>
+            <option value="Noodles">Noodles</option>
+            <option value="Pure Veg">Pure Veg</option>
+          </select>
 
-          <div className="add-price flex-col">
-            <p>Product Price</p>
-            <input
-              onChange={onChangeHandler}
-              value={data.price}
-              type="number"
-              name='price'
-              placeholder='$20'
-              required
-            />
-          </div>
-
+          <input
+            type="number"
+            name="price"
+            value={data.price}
+            onChange={onChangeHandler}
+            placeholder="₹200"
+            required
+          />
         </div>
 
-        <button type='submit' className='add-button'>Add</button>
+        <button type="submit" className="add-button">Add</button>
       </form>
     </div>
   )
