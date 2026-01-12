@@ -16,6 +16,7 @@ const List = ({ url }) => {
         toast.error("Error fetching food list");
       }
     } catch (err) {
+      console.log(err);
       toast.error("Server error");
     }
   };
@@ -34,6 +35,7 @@ const List = ({ url }) => {
         toast.error("Error deleting food");
       }
     } catch (err) {
+      console.log(err)
       toast.error("Server error");
     }
   };
@@ -51,7 +53,7 @@ const List = ({ url }) => {
         </div>
         {list.map((item, index) => (
           <div key={index} className='list-table-format'>
-            <img src={`${url}/images/${item.image}`} alt="" />
+            <img src={`${url}${item.image}`} alt="" />
             <p>{item.name}</p>
             <p>{item.category}</p>
             <p>{item.price}</p>
